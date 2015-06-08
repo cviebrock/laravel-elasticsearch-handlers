@@ -1,71 +1,44 @@
-# Laravel Elasticsearch Handler
+# Laravel-Elasticsearch-Handlers
 
-You're using [Laravel Elasticsearch](//github.com/cviebrock/laravel-elasticsearch) 
-to make it easy to create an ES client in your Laravel application, right?  Well, 
-you should also be using this package to make _using_ that client easier!
+An even easier way to use the official Elastic Search client in your Laravel applications.
 
 
-## Installation
+## Installation and Configuration
 
-
-1. Install the `cviebrock/laravel-elasticsearch-handler` package via composer:
+1. Install the `cviebrock/laravel-elasticsearch-handlers` package via composer:
 
     ```shell
-    $ composer require cviebrock/laravel-elasticsearch-handler
+    $ composer require cviebrock/laravel-elasticsearch-handlers
     ```
     
-2. Publish the configuration file.  For Laravel 4:
+2. Publish the configuration file.  For Laravel 5:
 
     ```shell
-    php artisan config:publish cviebrock/laravel-elasticsearch-handler
+    php artisan vendor:publish cviebrock/laravel-elasticsearch-handlers
     ```
 
-    Or for Laravel 5:
-
+    In order to make this package also work with Laravel 4, we can't do the
+    standard configuration publishing like most Laravel 4 packages do.  You will
+    need to simply copy the configuration file into your application's configuration folder:
+    
     ```shell
-    php artisan vendor:publish cviebrock/laravel-elasticsearch-handler
+    cp vendor/cviebrock/laravel-elasticsearch-handlers/config/elasticsearch-handlers.php app/config/
     ```
 
-3. Add the service provider (`app/config/app.php` for Laravel 4, `config/app.php` for Laravel 5):
+3. Add the service provider (`config/app.php` for Laravel 5 or `app/config/app.php` for Laravel 4).
+The service provider needs to come after the `LaravelElasticsearch` provider.
 
     ```php
-    # Add the service provider to the `providers` array
     'providers' => array(
         ...
-        'Cviebrock\LaravelElasticSearchHandler\ServiceProvider',
-    )
-
-    # Add the facade to the `aliases` array
-    'aliases' => array(
-        ...
-        'ElasticsearchHandler' => 'Cviebrock\LaravelElasticSearchHandler\Facade',
+        'Cviebrock\LaravelElasticSearch\ServiceProvider',
+        'Cviebrock\LaravelElasticSearchHandlers\ServiceProvider',
     )
     ```
-
-
+    
 
 ## Usage
 
-The ElasticsearchHandler is basically a decorator class for the Elasticsearch
-client. It intercepts (some of) your ES commands, transforms the query or payload,
-and passes it through.
-
-First you will need to create the decorated client by passing in a `\Elasticsearch\Client`
-class:
-
-```php
-$elastic = ElasticsearchHandler::make( \Elasticsearch\Client $client );
-```
-
-Alternatively, if you are using the [Laravel Elasticsearch](//github.com/cviebrock/laravel-elasticsearch)
-package (you are, aren't you?), then you can build the client and decorate it all
-in one go just by passing in the connection string defined in your Laravel-Elasticsearch
-configuration:
-
-```php
-$elastic = ElasticsearchHandler::make( 'connectionName' );
-
-// or the default connection:
-
-$elastic = ElasticsearchHandler::make();
-```
+This package extends the `laravel-elasticsearch` package by returning a "decorated" 
+Elasticsearch client class, instead of the default PHP client.  You can configure
+how the client is decorated on a per-connection basis.
