@@ -201,12 +201,12 @@ the parameters that were passed to the method.
 Handlers can also define a `boot` method with the following signature:
 
 ```php
-public function boot(\Elasticsearch\Client $client) {}
+public function boot(\Cviebrock\LaravelElasticsearchHandlers\Client $client) {}
 ```
 
 This is method is run when the handler is registered so it could be used, for
-example, to alter the behaviour of the client upon instantiation.  The base 
-Elasticsearch client is passed in as the only parameter.
+example, to alter the behaviour of the client upon instantiation.  The client 
+is passed in as the only parameter.
 
 
 <a name="pre-defined-handlers"></a>

@@ -37,8 +37,10 @@ class Client {
 	}
 
 	protected function boot() {
-		foreach ($this->getHandlers('__boot') as $handler) {
-			call_user_func([$handler, 'boot'], $this->client);
+		foreach ($this->handlers as $handler) {
+			if (method_exists($handler,'boot')) {
+				$handler->boot($this);
+			}
 		}
 	}
 
@@ -50,10 +52,6 @@ class Client {
 				$class = new $handlerClass;
 			} else {
 				$class = new $handlerClass($configuration);
-			}
-
-			if (method_exists($class, 'boot')) {
-				call_user_func([$class, 'boot'], $this->client);
 			}
 
 			$this->handlers[$handlerClass] = $class;
