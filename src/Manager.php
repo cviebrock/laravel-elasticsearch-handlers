@@ -18,28 +18,38 @@ class Manager extends BaseManager {
 	 */
 	protected function makeConnection($name) {
 
+		// Create a base ES client for the connection.
 		$baseClient = parent::makeConnection($name);
 
-		$client = new Client($baseClient);
+		// Find the base client wrapper class.
+		$handlerClass = $this->getHandlerClass();
 
-		$handlerConfig = $this->getHandlerConfig($name);
+		// Load the handlers for this configuration.
+		$handlers = $this->getConnectionHandlers($name);
 
-		// no configuration
-		if ($handlerConfig === null) {
-			return $client;
-		}
-
+		// Create a "wrapped" client passing in the appropriate configuration
+		return new $handlerClass($baseClient, $handlers);
 	}
 
-	protected function getHandlerConfig($name) {
+	/**
+	 * Get the default handler class.
+	 *
+	 * @return string
+	 */
+	public function getHandlerClass() {
+		return $this->app['config']['elasticsearch-handlers.defaultClass'];
+	}
+
+	/**
+	 * Get the handlers for the given connection name.
+	 *
+	 * @param string $name
+	 * @return array
+	 */
+	protected function getConnectionHandlers($name) {
 
 		$connections = $this->app['config']['elasticsearch-handlers.connections'];
 
-		if (is_null($config = array_get($connections, $name))) {
-			return null;
-		}
-
-		return $config;
+		return array_get($connections, $name, []);
 	}
-
 }
