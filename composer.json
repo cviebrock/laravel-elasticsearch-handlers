@@ -1,5 +1,5 @@
 {
-	"name": "cviebrock/laravel-elasticsearch-handler",
+	"name": "cviebrock/laravel-elasticsearch-handlers",
 	"description": "Further easiness when using Elasticsearch with Laravel",
 	"license": "MIT",
 	"authors": [
@@ -15,7 +15,7 @@
 	},
 	"autoload": {
 		"psr-4": {
-			"Cviebrock\\LaravelElasticsearchHandler\\": "src/"
+			"Cviebrock\\LaravelElasticsearchHandlers\\": "src/"
 		}
 	},
 	"minimum-stability": "beta",
