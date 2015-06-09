@@ -13,7 +13,6 @@ An even easier way to use the official Elastic Search client in your Laravel app
   * [Special `boot` Method](#special-boot-method)
 * [Pre-Defined Handlers](#pre-defined-handlers)
   * [EnvironmentIndexPrefixHandler](#environment-index-prefix-handler)
-  * [IndexTemplateHandler](#index-template-handler)
 * [Bugs, Suggestions and Contributions](#bugs)
 * [Copyright and License](#copyright)
 
@@ -213,17 +212,6 @@ This is basically the same handler as used in the example above.  It will take
 the current Laravel environment, mangles it a bit so it matches Elasticsearch's
 constraints for index names, and prepends it to the _index_ key in the given
 document.
-
-<a name="index-template-handler"></a>
-### IndexTemplateHandler
-
-Operates on the following methods:
-
-* boot-only
-
-This handler reads in the configuration file on boot and sets up any index
-templating that's defined in the configuration file.  See the default
-configuration file for an example.
 
 
 
