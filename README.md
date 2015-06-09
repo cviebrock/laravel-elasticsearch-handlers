@@ -43,7 +43,8 @@ An even easier way to use the official Elastic Search client in your Laravel app
     ```
 
 3. Add the service provider (`config/app.php` for Laravel 5 or `app/config/app.php` for Laravel 4).
-The service provider needs to come after the `LaravelElasticsearch` provider.
+The service provider needs to come after the `LaravelElasticsearch` provider, since we "hijack" 
+the Manager class from that package and use our own.
 
     ```php
     'providers' => array(
@@ -84,7 +85,7 @@ $client = Elasticsearch::connection('default');
 
 the package will create a base client (using the base `elasticsearch.php`
 configuration) then wrap it in the class defined by the _clientClass_ setting,
-and inject the _handlerConfig_ array.  So, in this case, an instance of
+and inject the _handlers_ array.  So, in this case, an instance of
 `Cviebrock\LaravelElasticsearchHandlers\Client` is returned.
 
 This class the bare minimum client wrapper.  It doesn't do anything except
@@ -127,29 +128,20 @@ Then create the Handler class (extending the BaseHandler class):
 class MyEnvironmentIndexPrefixHandler extends Cviebrock\LaravelElasticsearchHandlers\Handlers\BaseHandler {
 
 	/**
-	 * The client methods this handler intercepts.
-	 *
-	 * @var array
-	 */
-	protected $handledMethods = [
-		'index'
-	];
-
-	/**
 	 * Auto-prefix the document index name with the current Laravel
 	 * environment.
 	 * 
 	 * @param array $parameters
 	 * @return array
 	 */
-	public function index($parameters) {
+	public function handleIndex($parameters) {
 
 		if ($index = array_get($parameters, 'index')) {
 			$environment = mb_strtolower(preg_replace('/[^a-z0-9_\-]+/', '-', \App::environment()));
 			$parameters['index'] = trim($environment, '-') . '-_' . $index;
 		}
 
-		return [ $parameters ];
+		return $parameters;
 	}
 }
 ```
@@ -187,12 +179,7 @@ Also, you can register more than one handler per connection, which means that
 the functionality is "chainable".  E.g., prepend the environment to the _index_,
 and also add some default parameters to the _body_, etc.. 
 
-Note that our handler's `index()` method accepts the same parameter array that
-would be passed to the client, but returns that array wrapped in another array. 
-This is required so that the chaining works (since those `$parameters` are
-possibly going to run through PHP's `call_user_func_array()` method another few
-times. Basically, all handler methods should return an array that corresponds to 
-the parameters that were passed to the method.
+
 
 
 <a name="special-boot-method"></a>
